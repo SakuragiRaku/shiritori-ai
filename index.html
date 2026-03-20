@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>しりとりAI | 語彙力バトル</title>
+  <meta name="description" content="AIとしりとりで対決！語彙力レベルが上がるほど簡単な単語が使えなくなる。あなたの語彙力の限界に挑戦！">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- ヘッダー -->
+    <header class="header">
+      <div class="header-left">
+        <span class="logo">🧠</span>
+        <h1 class="app-title">しりとりAI</h1>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" id="history-btn" title="履歴">📊</button>
+        <button class="icon-btn" id="settings-btn" title="設定">⚙️</button>
+        <button class="icon-btn" id="theme-btn" title="テーマ切替">🌙</button>
+      </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main">
+
+      <!-- スタート画面 -->
+      <section class="screen active" id="screen-start">
+        <div class="start-content">
+          <div class="start-hero">
+            <span class="start-emoji">🧠⚔️🤖</span>
+            <h2 class="start-title">しりとりAI</h2>
+            <p class="start-desc">AIとしりとりで語彙力バトル！<br>レベルが上がるほど簡単な単語は使えなくなる…</p>
+          </div>
+          <div class="level-preview">
+            <div class="lv-item">Lv.1 フリー</div>
+            <div class="lv-item">Lv.2 日常語カット</div>
+            <div class="lv-item">Lv.3 一般語カット</div>
+            <div class="lv-item">Lv.4 教養語のみ</div>
+            <div class="lv-item">Lv.5 達人</div>
+          </div>
+          <button class="start-btn" id="start-btn">🎮 バトル開始</button>
+        </div>
+      </section>
+
+      <!-- 対戦画面 -->
+      <section class="screen" id="screen-battle">
+        <!-- レベル表示 -->
+        <div class="level-display">
+          <div class="level-badge" id="level-badge">
+            <span class="level-num" id="level-num">1</span>
+          </div>
+          <div class="level-info">
+            <span class="level-name" id="level-name">Lv.1 フリー</span>
+            <div class="level-gauge">
+              <div class="level-gauge-fill" id="level-gauge" style="width: 0%"></div>
+            </div>
+            <span class="level-progress" id="level-progress">次のレベルまで: 3ターン</span>
+          </div>
+        </div>
+
+        <!-- チャットログ -->
+        <div class="chat-log" id="chat-log"></div>
+
+        <!-- 入力エリア -->
+        <div class="input-area" id="input-area">
+          <div class="input-hint" id="input-hint"></div>
+          <div class="input-row">
+            <input type="text" class="word-input" id="word-input" placeholder="単語を入力..." autocomplete="off" />
+            <button class="send-btn" id="send-btn">送信</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 結果画面 -->
+      <section class="screen" id="screen-result">
+        <div class="result-content">
+          <span class="result-emoji" id="result-emoji">😵</span>
+          <h2 class="result-title" id="result-title">ゲームオーバー</h2>
+          <p class="result-reason" id="result-reason"></p>
+          <div class="result-stats">
+            <div class="result-stat">
+              <span class="result-stat-value" id="result-level">1</span>
+              <span class="result-stat-label">到達レベル</span>
+            </div>
+            <div class="result-stat">
+              <span class="result-stat-value" id="result-turns">0</span>
+              <span class="result-stat-label">ターン数</span>
+            </div>
+          </div>
+          <div class="result-words" id="result-words"></div>
+          <button class="retry-btn" id="retry-btn">🔄 もう一度</button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 履歴モーダル -->
+    <div class="modal-overlay hidden" id="history-modal">
+      <div class="modal">
+        <h2>📊 対戦履歴</h2>
+        <div class="history-stats" id="history-stats"></div>
+        <div class="history-list" id="history-list"></div>
+        <button class="modal-close-btn" id="history-close">閉じる</button>
+      </div>
+    </div>
+
+    <!-- 設定モーダル -->
+    <div class="modal-overlay hidden" id="settings-modal">
+      <div class="modal">
+        <h2>⚙️ 設定</h2>
+        <div class="form-group">
+          <label>Gemini APIキー</label>
+          <input type="password" class="form-input" id="api-key-input" placeholder="APIキーを入力..." />
+          <a class="api-link" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">→ Google AI Studioでキーを取得</a>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn cancel" id="settings-cancel">キャンセル</button>
+          <button class="modal-btn save" id="settings-save">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- レベルアップ演出 -->
+    <div class="levelup-overlay hidden" id="levelup-overlay">
+      <div class="levelup-content">
+        <span class="levelup-emoji">⚡</span>
+        <h2 class="levelup-title" id="levelup-title">LEVEL UP!</h2>
+        <p class="levelup-desc" id="levelup-desc"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="ai-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
